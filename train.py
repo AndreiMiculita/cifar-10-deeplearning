@@ -5,7 +5,7 @@ from src.models import *
 from src.utils import *
 
 architectures = ['VGG']
-activations = ['ELU','lRELU','ReLU','PReLU','CELU','GELU']
+activations = ['ELU','lRELU','ReLU','PReLU','CELU','GELU','Softplus','Softmax2d']
 optimizers = ['Adam', 'RMSprop', 'SGD+mom']
 
 
