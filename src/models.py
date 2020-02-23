@@ -315,4 +315,6 @@ def vgg(activation):
     # plt.legend()
     # plt.show()
 
-    return train_losses, eval_losses
+    acc_train = accuracy_train.item()
+    acc_test = accuracy_test.item()
+    return train_losses, eval_losses, acc_train, acc_test
