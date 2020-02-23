@@ -1,11 +1,11 @@
 from matplotlib import pyplot as plt
 import numpy as np 
-
+import os
 from src.models import *
 from src.utils import *
 
 architectures = ['VGG']
-activations = ['ELU','lRELU','ReLU','PReLU','CELU','GELU','Softplus','Softmax2d']
+activations = ['ELU','lRELU','ReLU','PReLU','CELU']
 optimizers = ['Adam', 'RMSprop', 'SGD+mom']
 
 
@@ -13,12 +13,19 @@ loss_, acc_ = [], []
 #test different activation functions
 for act in activations:
 	print('\nTesting {}: activations\n'.format(act))
-	l_, a_ = vgg(activation=act)
+	l_, a_, tr, ts = vgg(activation=act)
 	loss_.append([])
 	acc_.append([])
 	loss_[activations.index(act)] = l_
 	acc_[activations.index(act)] = a_
+
+	with open('{}acc.txt'.format(act), 'w') as f:
+		save_acc = [str(tr),  str(ts),  '\n']
+		f.writelines(save_acc)
+
 	torch.cuda.empty_cache()
+
+save_acc.close()
 	
 plt.title('model:VGG, optimizer: SGD+mom, activations:') 
 plt.xlabel('epochs')
