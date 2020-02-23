@@ -5,7 +5,7 @@ from src.models import *
 from src.utils import *
 
 architectures = ['VGG']
-activations = ['ELU','lRELU','ReLU','PReLU','CELU']
+activations = ['ELU','lRELU','ReLU','PReLU','CELU','Softpus']
 optimizers = ['Adam', 'RMSprop', 'SGD+mom']
 
 
@@ -36,6 +36,5 @@ plt.plot([x*10 for x in loss_[2]], '-r', label='ReLU')
 plt.plot([x*10 for x in loss_[3]], '-c', label='PReLU')
 plt.plot([x*10 for x in loss_[4]], '-y', label='CELU')
 plt.plot([x*10 for x in loss_[5]], '-m', label='Softplus')
-plt.plot([x*10 for x in loss_[5]], '-chartreuse', label='Softmax2d')
 plt.legend()
 plt.show() 
