@@ -388,8 +388,8 @@ def resnet_and_train():
     ])
 
     # define dataset - here CIFAR10
-    train_data = datasets.CIFAR10(root='./data/', train=True, download=False, transform=transform)
-    test_data = datasets.CIFAR10(root='./data/', train=False, transform=transform)
+    train_data = datasets.CIFAR10(root='.', train=True, download=False, transform=transform)
+    test_data = datasets.CIFAR10(root='.', train=False, transform=transform)
 
     # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
@@ -409,10 +409,10 @@ def resnet_and_train():
         # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
     # make predictions for a test set
-    accuracy = test(model, trainloader, loss_fn, device)
-    print("Model accuracy on train set: %.1f %%" % accuracy)
-    accuracy = test(model, testloader, loss_fn, device)
-    print("Model accuracy on test set: %.1f %%" % accuracy)
+    accuracy_train = test(model, trainloader, loss_fn, device)
+    print("Model accuracy on train set: %.1f %%" % accuracy_train)
+    accuracy_test = test(model, testloader, loss_fn, device)
+    print("Model accuracy on test set: %.1f %%" % accuracy_test)
     # plt.xlabel('epochs')
     # plt.title('model: VGG, activations:{}'.format(activation) + 'optimization: SGD+mom').
     # plt.ylabel('cross-entropy loss')
@@ -421,4 +421,6 @@ def resnet_and_train():
     # plt.legend()
     # plt.show()
 
-    return train_losses, eval_losses
+    acc_train = accuracy_train.item()
+    acc_test = accuracy_test.item()
+    return train_losses, eval_losses, acc_train, acc_test

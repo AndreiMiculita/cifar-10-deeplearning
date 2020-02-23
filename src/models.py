@@ -3,7 +3,6 @@ import torch.nn as nn
 from torchvision import datasets, transforms
 
 from src.utils import *
-from src.resnet import *
 
 # define model hyperparameters
 batch_size = 256

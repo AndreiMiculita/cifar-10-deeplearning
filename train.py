@@ -1,4 +1,5 @@
 from src.models import *
+from src.resnet import resnet_and_train
 from src.utils import *
 
 architectures = ['VGG']
@@ -9,7 +10,7 @@ loss_, acc_ = [], []
 # test different activation functions
 for act in activations:
     print('\nTesting {}: activations\n'.format(act))
-    l_, a_, tr, ts = vgg(activation=act)
+    l_, a_, tr, ts = resnet_and_train()
     loss_.append([])
     acc_.append([])
     loss_[activations.index(act)] = l_
@@ -20,8 +21,6 @@ for act in activations:
         f.writelines(save_acc)
 
     torch.cuda.empty_cache()
-
-save_acc.close()
 
 plt.title('model:VGG, optimizer: SGD+mom, activations:')
 plt.xlabel('epochs')
