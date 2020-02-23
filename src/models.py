@@ -303,10 +303,10 @@ def vgg(activation):
         # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
     # make predictions for a test set
-    accuracy = test(model, trainloader, loss_fn, device)
-    print("Model accuracy on train set: %.1f %%" % accuracy)
-    accuracy = test(model, testloader, loss_fn, device)
-    print("Model accuracy on test set: %.1f %%" % accuracy)
+    accuracy_train = test(model, trainloader, loss_fn, device)
+    print("Model accuracy on train set: %.1f %%" % accuracy_train)
+    accuracy_test = test(model, testloader, loss_fn, device)
+    print("Model accuracy on test set: %.1f %%" % accuracy_test)
     # plt.xlabel('epochs')
     # plt.title('model: VGG, activations:{}'.format(activation) + 'optimization: SGD+mom').
     # plt.ylabel('cross-entropy loss')
