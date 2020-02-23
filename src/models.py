@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import torch.nn as nn
+import time
 from torchvision import datasets, transforms
 
 from src.utils import *
@@ -122,7 +123,7 @@ def alexnet(activations, optim):
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
-    
+
     # Try data augmentation
     # transform = transforms.Compose([
     #     ImgAugTransform(),
@@ -150,8 +151,10 @@ def alexnet(activations, optim):
     else:
         raise ValueError
 
+    start = time.time()
     # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
+    time_taken = time.time() - start   
     # make predictions for a test set
     accuracy = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy)
@@ -164,7 +167,7 @@ def alexnet(activations, optim):
     plt.plot(eval_losses, 'b--', label='test')
     plt.legend()
     plt.show()
-    return train_losses, eval_losses
+    return train_losses, eval_losses, str(int(time_taken))
 
 
 class VGG(nn.Module):
@@ -299,8 +302,10 @@ def vgg(activation):
     else:
         raise ValueError
 
+    start = time.time()
         # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
+    time_taken = time.time() - start     
     # make predictions for a test set
     accuracy_train = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy_train)
@@ -316,4 +321,4 @@ def vgg(activation):
 
     acc_train = accuracy_train.item()
     acc_test = accuracy_test.item()
-    return train_losses, eval_losses, acc_train, acc_test
+    return train_losses, eval_losses, acc_train, acc_test, str(int(time_taken))

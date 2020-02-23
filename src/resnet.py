@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
+import datetime
+import time
 
 from torchvision import datasets, transforms
 from src.utils import *
@@ -9,7 +11,7 @@ from src.utils import *
 
 # define model hyperparameters
 batch_size = 256
-epochs = 20
+epochs = 2
 learning_rate = .01
 img_crop_size = 64
 print_step = 120
@@ -460,8 +462,10 @@ def resnet_and_train(activation):
     else:
         raise ValueError
 
-        # train the model on the train set, while validating on the validation set
+    start = time.time()
+    # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
+    time_taken = time.time() - start
     # make predictions for a test set
     accuracy_train = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy_train)
@@ -477,4 +481,4 @@ def resnet_and_train(activation):
 
     acc_train = accuracy_train.item()
     acc_test = accuracy_test.item()
-    return train_losses, eval_losses, acc_train, acc_test
+    return train_losses, eval_losses, acc_train, acc_test, str(int(time_taken))
