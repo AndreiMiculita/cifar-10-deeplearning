@@ -1,17 +1,11 @@
-import math
-import sys
-import torch
+import matplotlib.pyplot as plt
 import torch.nn as nn
-from torch.utils.data import DataLoader
-from torch.autograd import Variable
-import torchvision
-from torchvision import models, datasets, transforms
-from src.utils import * 
-from src.image_aug import ImgAugTransform 
-import PIL
-import numpy as np
+from torchvision import datasets, transforms
 
-#define model hyperparameters
+from src.utils import *
+from src.resnet import *
+
+# define model hyperparameters
 batch_size = 256
 epochs = 20
 learning_rate = .01
@@ -21,14 +15,15 @@ weight_decay = 0.01
 
 global activation
 lookup_act = {
-	'ReLU'		 :	nn.ReLU(inplace=True),
-	'ELU'		 :	nn.ELU(),
-	'lRELU'		 :	nn.LeakyReLU(),
-	'PReLU'      :  nn.PReLU(),
-    'CELU'       :  nn.CELU(),
-    'Softplus'   :  nn.Softplus(),
-    'Softmax2d'  :  nn.Softmax2d()
+    'ReLU'       : nn.ReLU(inplace=True),
+    'ELU'        : nn.ELU(),
+    'lRELU'      : nn.LeakyReLU(),
+    'PReLU'      : nn.PReLU(),
+    'CELU'       : nn.CELU(),
+    'Softplus'   : nn.Softplus(),
+    'Softmax2d'  : nn.Softmax2d()
 }
+
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""
@@ -41,7 +36,7 @@ def conv1x1(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=False)
 
 
-#define AlexNet Architecture
+# define AlexNet Architecture
 class AlexNet(nn.Module):
     def __init__(self, num_classes, activation):
         super(AlexNet, self).__init__()
@@ -73,7 +68,7 @@ class AlexNet(nn.Module):
         )
 
     # takes in a module and applies the specified weight initialization
-    def weights_init_uniform(m):
+    def weights_init_uniform(self, m):
         classname = m.__class__.__name__
         # for every Linear layer in a model..
         if classname.find('Linear') != -1:
@@ -88,30 +83,31 @@ class AlexNet(nn.Module):
         x = self.classifier(x)
         return x
 
-    def lookup(self, f): #activation function wrapping
-        if f=='ReLU':
+    def lookup(self, f):  # activation function wrapping
+        if f == 'ReLU':
             return nn.ReLU(inplace=True)
-        elif f=='ELU':
-            return nn.ELU()
-        elif f=='lReLU':
+        elif f == 'ELU':
+            return nn.ELU
+        elif f == 'lReLU':
             return nn.LeakyReLU(negative_slope=0.01)
-        elif f=='GeLU':
-            return GELU()
+        elif f == 'GeLU':
+            return nn.GELU
+
 
 def alexnet(activations, optim):
-    #if not sys.argv[1:]:
+    # if not sys.argv[1:]:
     #   print('\nGive arguements. Usage:\n')
     #   return 0
-    #else:
+    # else:
 
     activation = 'ReLU'
-    optim='Adam'
+    optim = 'Adam'
     model = AlexNet(num_classes=10, activation=activation)
-    #model.weights_init_uniform()
+    # model.weights_init_uniform()
 
     print("Using model: \n", model)
 
-    #use gpu tensors if available
+    # use gpu tensors if available
     device = 'cpu'
     if torch.cuda.is_available():
         model = model.cuda()
@@ -120,15 +116,15 @@ def alexnet(activations, optim):
     else:
         print('Using cpu.\n')
 
-    #data preproc stage - img format: {batch_size X 3 X img_size X img_size}
-    #convert to Tensor objects and normalize to floats in [0,1]
+    # data preproc stage - img format: {batch_size X 3 X img_size X img_size}
+    # convert to Tensor objects and normalize to floats in [0,1]
     transform = transforms.Compose([
         transforms.Resize(img_crop_size, interpolation=2),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    #Try data augmentation 
+    # Try data augmentation
     # transform = transforms.Compose([
     #     ImgAugTransform(),
     #     lambda x: PIL.Image.fromarray(x),
@@ -136,35 +132,33 @@ def alexnet(activations, optim):
     #     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     # ])
 
-
-    #define dataset - here CIFAR10
+    # define dataset - here CIFAR10
     train_data = datasets.CIFAR10(root='./data/', train=True, download=True, transform=transform)
     test_data = datasets.CIFAR10(root='./data/', train=False, transform=transform)
 
-    #shuffle and batch data inside DataLoader objects
+    # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     testloader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
-    #define loss function and optimization algorithm
-    loss_fn = nn.CrossEntropyLoss() #here cross-entropy for multiclass classficiation
+    # define loss function and optimization algorithm
+    loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
     if optim == 'SGD+mom':
         optimizer = torch.optim.SGD(model.parameters(), lr=.01, momentum=.93, weight_decay=weight_decay)
     elif optim == 'Adam':
         optimizer = torch.optim.Adam(model.parameters(), lr=.0001, weight_decay=weight_decay)
     elif optim == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=.001, alpha=.95, weight_decay=weight_decay) 
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=.001, alpha=.95, weight_decay=weight_decay)
     else:
         raise ValueError
 
-    #train the model on the train set, while validating on the validation set 
-    train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, 
-                            learning_rate, device)
-    #make predictions for a test set
+    # train the model on the train set, while validating on the validation set
+    train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
+    # make predictions for a test set
     accuracy = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy)
     accuracy = test(model, testloader, loss_fn, device)
     print("Model accuracy on test set: %.1f %%" % accuracy)
-    plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optim)) 
+    plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optim))
     plt.xlabel('epochs')
     plt.ylabel('cross-entropy loss')
     plt.plot(train_losses, 'r--', label='train')
@@ -172,6 +166,7 @@ def alexnet(activations, optim):
     plt.legend()
     plt.show()
     return train_losses, eval_losses
+
 
 class VGG(nn.Module):
 
@@ -237,8 +232,9 @@ cfgs = {
 }
 
 
-def _vgg(arch, cfg, batch_norm, pretrained, progress, activation, **kwargs):   
+def _vgg(arch, cfg, batch_norm, pretrained, progress, activation, **kwargs):
     return VGG(make_layers(cfgs[cfg], batch_norm=batch_norm), activation, **kwargs)
+
 
 def vgg16(activation, pretrained=False, progress=True, **kwargs):
     """VGG 16-layer model (configuration "D")
@@ -257,19 +253,18 @@ def vgg16_bn(activation, pretrained=False, progress=True, **kwargs):
     """
     return _vgg('vgg16_bn', 'D', True, pretrained, progress, activation, **kwargs)
 
-#define VGG architecture
+
+# define VGG architecture
 def vgg(activation):
-
-
-    optim='SGD+mom'
+    optim = 'SGD+mom'
     model = vgg16_bn(activation, num_classes=10)
     print("Using model: \n", model)
 
-    #get the working directory where the data is saved
+    # get the working directory where the data is saved
     import os
     datadir = os.getcwd()
 
-    #use gpu tensors if available
+    # use gpu tensors if available
     device = 'cpu'
     if torch.cuda.is_available():
         model = model.cuda()
@@ -278,36 +273,36 @@ def vgg(activation):
     else:
         print('Using cpu.\n')
 
-    #data preproc stage - img format: {batch_size X 3 X img_size X img_size}
-    #convert to Tensor objects and normalize to floats in [0,1]
+    # data preproc stage - img format: {batch_size X 3 X img_size X img_size}
+    # convert to Tensor objects and normalize to floats in [0,1]
     transform = transforms.Compose([
         transforms.Resize(img_crop_size, interpolation=2),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    #define dataset - here CIFAR10
+    # define dataset - here CIFAR10
     train_data = datasets.CIFAR10(root='./data/', train=True, download=False, transform=transform)
     test_data = datasets.CIFAR10(root='./data/', train=False, transform=transform)
 
-    #shuffle and batch data inside DataLoader objects
+    # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     testloader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
-    #define loss function and optimization algorithm
-    loss_fn = nn.CrossEntropyLoss() #here cross-entropy for multiclass classficiation
+    # define loss function and optimization algorithm
+    loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
     if optim == 'SGD+mom':
         optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=.95, weight_decay=weight_decay)
     elif optim == 'Adam':
         optimizer = torch.optim.Adam(model.parameters(), lr=.0001, weight_decay=weight_decay)
     elif optim == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=.0001, alpha=.95, weight_decay=weight_decay) 
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=.0001, alpha=.95, weight_decay=weight_decay)
     else:
         raise ValueError
 
-        #train the model on the train set, while validating on the validation set 
+        # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
-    #make predictions for a test set
+    # make predictions for a test set
     accuracy = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy)
     accuracy = test(model, testloader, loss_fn, device)
@@ -319,6 +314,5 @@ def vgg(activation):
     # plt.plot(eval_losses, 'b--', label='test')
     # plt.legend()
     # plt.show()
-    
-    return train_losses, eval_losses
 
+    return train_losses, eval_losses

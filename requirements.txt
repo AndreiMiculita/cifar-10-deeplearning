@@ -1,0 +1,5 @@
+imgaug
+matplotlib
+numpy
+torch
+torchvision
