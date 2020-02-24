@@ -13,17 +13,6 @@ img_crop_size = 64
 print_step = 120
 weight_decay = 0.01
 
-global activation
-lookup_act = {
-    'ReLU'       : nn.ReLU(inplace=True),
-    'ELU'        : nn.ELU(),
-    'lRELU'      : nn.LeakyReLU(),
-    'PReLU'      : nn.PReLU(),
-    'CELU'       : nn.CELU(),
-    'Softplus'   : nn.Softplus(),
-    'Softmax2d'  : nn.Softmax2d()
-}
-
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""
@@ -40,7 +29,7 @@ def conv1x1(in_planes, out_planes, stride=1):
 class AlexNet(nn.Module):
     def __init__(self, num_classes, activation):
         super(AlexNet, self).__init__()
-        self.activation = self.lookup(activation)
+        self.activation = activation
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
             self.activation,
@@ -83,25 +72,13 @@ class AlexNet(nn.Module):
         x = self.classifier(x)
         return x
 
-    def lookup(self, f):  # activation function wrapping
-        if f == 'ReLU':
-            return nn.ReLU(inplace=True)
-        elif f == 'ELU':
-            return nn.ELU
-        elif f == 'lReLU':
-            return nn.LeakyReLU(negative_slope=0.01)
-        elif f == 'GeLU':
-            return nn.GELU
 
-
-def alexnet(activations, optim):
+def alexnet(activation, optimizer: torch.optim.Optimizer):
     # if not sys.argv[1:]:
     #   print('\nGive arguements. Usage:\n')
     #   return 0
     # else:
 
-    activation = 'ReLU'
-    optim = 'Adam'
     model = AlexNet(num_classes=10, activation=activation)
     # model.weights_init_uniform()
 
@@ -142,25 +119,17 @@ def alexnet(activations, optim):
 
     # define loss function and optimization algorithm
     loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
-    if optim == 'SGD+mom':
-        optimizer = torch.optim.SGD(model.parameters(), lr=.01, momentum=.93, weight_decay=weight_decay)
-    elif optim == 'Adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=.0001, weight_decay=weight_decay)
-    elif optim == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=.001, alpha=.95, weight_decay=weight_decay)
-    else:
-        raise ValueError
 
     start = time.time()
     # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
-    time_taken = time.time() - start   
+    time_taken = time.time() - start
     # make predictions for a test set
     accuracy = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy)
     accuracy = test(model, testloader, loss_fn, device)
     print("Model accuracy on test set: %.1f %%" % accuracy)
-    plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optim))
+    plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optimizer))
     plt.xlabel('epochs')
     plt.ylabel('cross-entropy loss')
     plt.plot(train_losses, 'r--', label='train')
@@ -176,7 +145,7 @@ class VGG(nn.Module):
         super(VGG, self).__init__()
         self.features = features
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
-        self.activation = lookup_act[activation]
+        self.activation = activation
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7, 4096),
             self.activation,
@@ -257,14 +226,9 @@ def vgg16_bn(activation, pretrained=False, progress=True, **kwargs):
 
 
 # define VGG architecture
-def vgg(activation):
-    optim = 'SGD+mom'
+def vgg(activation, optimizer: torch.optim.Optimizer):
     model = vgg16_bn(activation, num_classes=10)
     print("Using model: \n", model)
-
-    # get the working directory where the data is saved
-    import os
-    datadir = os.getcwd()
 
     # use gpu tensors if available
     device = 'cpu'
@@ -293,19 +257,11 @@ def vgg(activation):
 
     # define loss function and optimization algorithm
     loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
-    if optim == 'SGD+mom':
-        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=.95, weight_decay=weight_decay)
-    elif optim == 'Adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=.0001, weight_decay=weight_decay)
-    elif optim == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=.0001, alpha=.95, weight_decay=weight_decay)
-    else:
-        raise ValueError
 
     start = time.time()
-        # train the model on the train set, while validating on the validation set
+    # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
-    time_taken = time.time() - start     
+    time_taken = time.time() - start
     # make predictions for a test set
     accuracy_train = test(model, trainloader, loss_fn, device)
     print("Model accuracy on train set: %.1f %%" % accuracy_train)

@@ -17,21 +17,9 @@ img_crop_size = 64
 print_step = 120
 weight_decay = 0.01
 
-global activation
-lookup_act = {
-    'ReLU'       :  nn.ReLU(inplace=True),
-    'ELU'        :  nn.ELU(),
-    'lRELU'      :  nn.LeakyReLU(),
-    'PReLU'      :  nn.PReLU(),
-    'CELU'       :  nn.CELU(),
-    'Softplus'   :  nn.Softplus()
-}
-
-
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152', 'resnext50_32x4d', 'resnext101_32x8d',
            'wide_resnet50_2', 'wide_resnet101_2']
-
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -97,20 +85,6 @@ class BasicBlock(nn.Module):
 
         return out
 
-    def lookup(self, f): #activation function wrapping
-        if f=='ReLU':
-            return nn.ReLU(inplace=True)
-        elif f=='ELU':
-            return nn.ELU()
-        elif f=='lRELU':
-            return nn.LeakyReLU(negative_slope=0.01)
-        elif f=='CELU':
-            return nn.CELU()
-        elif f=='PReLU':
-            return nn.PReLU()
-        elif f=='Softplus':
-            return nn.Softplus()
-
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -156,21 +130,6 @@ class Bottleneck(nn.Module):
         return out
 
 
-    def lookup(self, f): #activation function wrapping
-        if f=='ReLU':
-            return nn.ReLU(inplace=True)
-        elif f=='ELU':
-            return nn.ELU()
-        elif f=='lRELU':
-            return nn.LeakyReLU(negative_slope=0.01)
-        elif f=='CELU':
-            return nn.CELU()
-        elif f=='PReLU':
-            return nn.PReLU()
-        elif f=='Softplus':
-            return nn.Softplus()
-
-
 class ResNet(nn.Module):
 
     def __init__(self, activation, block, layers, num_classes=1000, zero_init_residual=False,
@@ -195,7 +154,7 @@ class ResNet(nn.Module):
         self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3,
                                bias=False)
         self.bn1 = norm_layer(self.inplanes)
-        self.activation = self.lookup(activation)
+        self.activation = activation
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
@@ -206,7 +165,7 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * block.expansion, num_classes)
-        #TODO: check nonlinearity
+        # TODO: check nonlinearity
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -242,7 +201,7 @@ class ResNet(nn.Module):
                             self.base_width, previous_dilation, norm_layer))
         self.inplanes = planes * block.expansion
         for _ in range(1, blocks):
-            layers.append(block(self.activation,self.inplanes, planes, groups=self.groups,
+            layers.append(block(self.activation, self.inplanes, planes, groups=self.groups,
                                 base_width=self.base_width, dilation=self.dilation,
                                 norm_layer=norm_layer))
 
@@ -268,20 +227,6 @@ class ResNet(nn.Module):
 
     def forward(self, x):
         return self._forward_impl(x)
-
-    def lookup(self, f): #activation function wrapping
-        if f=='ReLU':
-            return nn.ReLU(inplace=True)
-        elif f=='ELU':
-            return nn.ELU()
-        elif f=='lRELU':
-            return nn.LeakyReLU(negative_slope=0.01)
-        elif f=='CELU':
-            return nn.CELU()
-        elif f=='PReLU':
-            return nn.PReLU()
-        elif f=='Softplus':
-            return nn.Softplus()
 
 
 def _resnet(activation, arch, block, layers, pretrained, progress, **kwargs):
@@ -417,8 +362,7 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
                    pretrained, progress, **kwargs)
 
 
-def resnet_and_train(activation):
-    optim = 'RMSprop'
+def resnet_and_train(activation, optimizer: torch.optim.Optimizer):
     model = resnet18(activation)
     print("Using model: \n", model)
 
@@ -453,14 +397,6 @@ def resnet_and_train(activation):
 
     # define loss function and optimization algorithm
     loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
-    if optim == 'SGD+mom':
-        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=.95, weight_decay=weight_decay)
-    elif optim == 'Adam':
-        optimizer = torch.optim.Adam(model.parameters(), lr=.0001, weight_decay=weight_decay)
-    elif optim == 'RMSprop':
-        optimizer = torch.optim.RMSprop(model.parameters(), lr=.0001, alpha=.95, weight_decay=weight_decay)
-    else:
-        raise ValueError
 
     start = time.time()
     # train the model on the train set, while validating on the validation set

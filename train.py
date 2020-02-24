@@ -2,26 +2,26 @@ from src.models import *
 from src.resnet import resnet_and_train
 from src.utils import *
 
-architectures = ['VGG']
-activations = ['ELU', 'lRELU', 'ReLU', 'PReLU', 'CELU', 'Softplus']
-optimizers = ['Adam', 'RMSprop', 'SGD+mom']
+architectures = [vgg, alexnet, resnet_and_train]
+activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
+optimizers = [torch.optim.Adam, torch.optim.RMSprop, torch.optim.SGD]
 
 loss_, acc_ = [], []
 # test different activation functions
-for act in activations:
-    print('\nTesting activations:{}\n'.format(act))
-    l_, a_, tr, ts, time_taken = vgg(act)
-    loss_.append([])
-    acc_.append([])
-    loss_[activations.index(act)] = l_
-    acc_[activations.index(act)] = a_
+with open('accuracies.csv', 'a') as f:
+    print("architecture,optimizer,activation,training accuracy,testing accuracy,time elapsed\n", file=f)
+    for arch in architectures:
+        for opt in optimizers:
+            for act in activations:
+                print("testing ", arch, " ", opt, " ", act)
+                l_, a_, tr, ts, time_taken = arch(act, opt)
+                loss_.append([])
+                acc_.append([])
+                loss_[activations.index(act)] = l_
+                acc_[activations.index(act)] = a_
 
-    with open('{}acc.csv'.format(act), 'w') as f:
-        save_acc = [str(tr),',', str(ts),',',time_taken,"\n"]
-        f.writelines(save_acc)
-
-    torch.cuda.empty_cache()
-
+                print(arch, opt, act, str(tr), ',', str(ts), ',', time_taken, "\n", file=f)
+                torch.cuda.empty_cache()
 
 plt.title('model: VGG, optimizer: SGD+mom, activations:')
 plt.xlabel('epochs')
