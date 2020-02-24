@@ -83,7 +83,8 @@ def train(network: torch.nn.Module,
     train_losses = []
     eval_losses = []
     for t in range(NUM_EPOCHS):
-        train_loss = train_epoch(network=network, dataloader=trainloader, optimizer=optimizer, loss_fn=loss_fn,
+        train_loss = train_epoch(network=network, dataloader=trainloader, optimizer=optimizer(network.parameters()),
+                                 loss_fn=loss_fn,
                                  device=device)
         test_loss = test_epoch(network=network, dataloader=testloader, loss_fn=loss_fn, device=device)
 

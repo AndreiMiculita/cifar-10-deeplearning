@@ -2,7 +2,7 @@ from src.models import *
 from src.resnet import resnet_and_train
 from src.utils import *
 
-architectures = [vgg, alexnet, resnet_and_train]
+architectures = [alexnet, vgg, resnet_and_train]
 activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
 optimizers = [torch.optim.Adam, torch.optim.RMSprop, torch.optim.SGD]
 

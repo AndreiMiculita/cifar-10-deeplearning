@@ -388,8 +388,8 @@ def resnet_and_train(activation, optimizer: torch.optim.Optimizer):
     ])
 
     # define dataset - here CIFAR10
-    train_data = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    test_data = datasets.CIFAR10(root='./data', train=False, transform=transform)
+    train_data = datasets.CIFAR10(root='.', train=True, download=False, transform=transform)
+    test_data = datasets.CIFAR10(root='.', train=False, transform=transform)
 
     # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
