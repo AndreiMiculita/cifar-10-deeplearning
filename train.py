@@ -2,7 +2,7 @@ from src.models import *
 from src.resnet import resnet_and_train
 from src.utils import *
 
-architectures = [alexnet, vgg, resnet_and_train]
+architectures = [alexnet]
 activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
 optimizers = [torch.optim.Adam, torch.optim.RMSprop, torch.optim.SGD]
 
@@ -23,14 +23,14 @@ with open('accuracies.csv', 'a') as f:
                 print(arch, opt, act, str(tr), ',', str(ts), ',', time_taken, "\n", file=f)
                 torch.cuda.empty_cache()
 
-plt.title('model: VGG, optimizer: SGD+mom, activations:')
-plt.xlabel('epochs')
-plt.ylabel('cross-entropy loss')
-plt.plot([x * 10 for x in loss_[0]], '-b', label='ELU')
-plt.plot([x * 10 for x in loss_[1]], '-g', label='leaky ReLU')
-plt.plot([x * 10 for x in loss_[2]], '-r', label='ReLU')
-plt.plot([x * 10 for x in loss_[3]], '-c', label='PReLU')
-plt.plot([x * 10 for x in loss_[4]], '-y', label='CELU')
-plt.plot([x * 10 for x in loss_[5]], '-m', label='Softplus')
-plt.legend()
-plt.show()
+            plt.title('model: Alexnet, optimizer: {}'.format(opt) +', activations:')
+            plt.xlabel('epochs')
+            plt.ylabel('cross-entropy loss')
+            plt.plot([x * 10 for x in loss_[0]], '-b', label='ELU')
+            plt.plot([x * 10 for x in loss_[1]], '-g', label='leaky ReLU')
+            plt.plot([x * 10 for x in loss_[2]], '-r', label='ReLU')
+            plt.plot([x * 10 for x in loss_[3]], '-c', label='PReLU')
+            plt.plot([x * 10 for x in loss_[4]], '-y', label='CELU')
+            plt.plot([x * 10 for x in loss_[5]], '-m', label='Softplus')
+            plt.legend()
+            plt.show()

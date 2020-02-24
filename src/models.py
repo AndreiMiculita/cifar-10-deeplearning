@@ -7,7 +7,7 @@ from src.utils import *
 
 # define model hyperparameters
 batch_size = 256
-epochs = 50
+epochs = 1
 learning_rate = .01
 img_crop_size = 64
 print_step = 120
@@ -109,34 +109,36 @@ def alexnet(activation, optimizer: torch.optim.Optimizer):
     #     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     # ])
 
-    # define dataset - here CIFAR10
-    train_data = datasets.CIFAR10(root='.', train=True, download=False, transform=transform)
-    test_data = datasets.CIFAR10(root='.', train=False, transform=transform)
+    # define dataset - CIFAR10
+    train_data = datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
+    test_data = datasets.CIFAR10(root='./data', train=False, transform=transform)
 
     # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     testloader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
     # define loss function and optimization algorithm
-    loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
-
+    loss_fn = nn.CrossEntropyLoss()  # cross-entropy for multiclass classficiation
+    #get training time
     start = time.time()
     # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
     time_taken = time.time() - start
     # make predictions for a test set
-    accuracy = test(model, trainloader, loss_fn, device)
-    print("Model accuracy on train set: %.1f %%" % accuracy)
-    accuracy = test(model, testloader, loss_fn, device)
-    print("Model accuracy on test set: %.1f %%" % accuracy)
-    plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optimizer))
-    plt.xlabel('epochs')
-    plt.ylabel('cross-entropy loss')
-    plt.plot(train_losses, 'r--', label='train')
-    plt.plot(eval_losses, 'b--', label='test')
-    plt.legend()
-    plt.show()
-    return train_losses, eval_losses, str(int(time_taken))
+    accuracy_train = test(model, trainloader, loss_fn, device)
+    print("Model accuracy on train set: %.1f %%" % accuracy_train)
+    accuracy_test = test(model, testloader, loss_fn, device)
+    print("Model accuracy on test set: %.1f %%" % accuracy_test)
+    # plt.title('model: AlexNet, activation: ReLu, optimization:'.format(optimizer))
+    # plt.xlabel('epochs')
+    # plt.ylabel('cross-entropy loss')
+    # plt.plot(train_losses, 'r--', label='train')
+    # plt.plot(eval_losses, 'b--', label='test')
+    # plt.legend()
+    # plt.show()
+    acc_train = accuracy_train.item()
+    acc_test = accuracy_test.item()
+    return train_losses, eval_losses, acc_train, acc_test, str(int(time_taken))
 
 
 class VGG(nn.Module):
@@ -247,17 +249,17 @@ def vgg(activation, optimizer: torch.optim.Optimizer):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # define dataset - here CIFAR10
-    train_data = datasets.CIFAR10(root='.', train=True, download=False, transform=transform)
-    test_data = datasets.CIFAR10(root='.', train=False, transform=transform)
+    # define dataset - CIFAR10
+    train_data = datasets.CIFAR10(root='./data', train=True, download=False, transform=transform)
+    test_data = datasets.CIFAR10(root='./data', train=False, transform=transform)
 
     # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     testloader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
     # define loss function and optimization algorithm
-    loss_fn = nn.CrossEntropyLoss()  # here cross-entropy for multiclass classficiation
-
+    loss_fn = nn.CrossEntropyLoss()  # cross-entropy for multiclass classficiation
+    #get training time
     start = time.time()
     # train the model on the train set, while validating on the validation set
     train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
