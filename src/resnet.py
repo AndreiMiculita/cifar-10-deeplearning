@@ -11,7 +11,7 @@ from src.utils import *
 
 # define model hyperparameters
 batch_size = 256
-epochs = 2
+epochs = 20
 learning_rate = .01
 img_crop_size = 64
 print_step = 120
@@ -418,7 +418,7 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
 
 
 def resnet_and_train(activation):
-    optim = 'SGD+mom'
+    optim = 'RMSprop'
     model = resnet18(activation)
     print("Using model: \n", model)
 

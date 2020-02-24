@@ -7,7 +7,7 @@ from src.utils import *
 
 # define model hyperparameters
 batch_size = 256
-epochs = 20
+epochs = 50
 learning_rate = .01
 img_crop_size = 64
 print_step = 120

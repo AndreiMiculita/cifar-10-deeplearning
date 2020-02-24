@@ -9,8 +9,8 @@ optimizers = ['Adam', 'RMSprop', 'SGD+mom']
 loss_, acc_ = [], []
 # test different activation functions
 for act in activations:
-    print('\nTesting {}: activations\n'.format(act))
-    l_, a_, tr, ts, time_taken = resnet_and_train(act)
+    print('\nTesting activations:{}\n'.format(act))
+    l_, a_, tr, ts, time_taken = vgg(act)
     loss_.append([])
     acc_.append([])
     loss_[activations.index(act)] = l_
@@ -23,7 +23,7 @@ for act in activations:
     torch.cuda.empty_cache()
 
 
-plt.title('model:resnet, optimizer: SGD+mom, activations:')
+plt.title('model: VGG, optimizer: SGD+mom, activations:')
 plt.xlabel('epochs')
 plt.ylabel('cross-entropy loss')
 plt.plot([x * 10 for x in loss_[0]], '-b', label='ELU')
