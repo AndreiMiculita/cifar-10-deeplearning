@@ -179,4 +179,3 @@ fabric.properties
 
 cifar-10-batches-py
 data
-/accuracies.csv

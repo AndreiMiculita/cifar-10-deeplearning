@@ -8,7 +8,7 @@ from torchvision import datasets, transforms
 
 # define model hyperparameters
 batch_size = 256
-epochs = 20
+epochs = 30
 learning_rate = .01
 img_crop_size = 64
 print_step = 120
@@ -34,8 +34,8 @@ def train_and_test(model, optimizer):
     ])
 
     # define dataset - here CIFAR10
-    train_data = datasets.CIFAR10(root='.', train=True, download=False, transform=transform)
-    test_data = datasets.CIFAR10(root='.', train=False, transform=transform)
+    train_data = datasets.CIFAR10(root='./data/', train=True, download=False, transform=transform)
+    test_data = datasets.CIFAR10(root='./data/', train=False, transform=transform)
 
     # shuffle and batch data inside DataLoader objects
     trainloader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
@@ -61,9 +61,9 @@ def train_and_test(model, optimizer):
 
 
 if __name__ == "__main__":
-    models = [AlexNet, resnet18, vgg16_bn]
+    models = [resnet18, vgg16_bn]
     activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
-    optimizers = [torch.optim.Adam, torch.optim.RMSprop, torch.optim.SGD]
+    optimizers = [torch.optim.Adam, torch.optim.RMSprop]
 
     loss_, acc_ = [], []
     # test different activation functions
@@ -74,6 +74,8 @@ if __name__ == "__main__":
                 for activation in activations:
                     print("testing ", model, " ", optimizer, " ", activation)
                     l_, a_, tr, ts, time_taken = train_and_test(model(activation=activation, num_classes=10), optimizer)
+                    print(l_)
+                    print(a_)
 
                     print(f'{model},{optimizer},{activation},{str(tr)},{str(ts)},{time_taken}\n', file=accuracies)
                     print(f'{model},{optimizer},{activation},{",".join(map(str,l_))}\n', file=loss_over_time)
