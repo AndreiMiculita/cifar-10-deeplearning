@@ -2,19 +2,25 @@ from typing import Callable, List, Tuple
 
 import torch
 from torch.utils.data import DataLoader
+from torch.optim.optimizer import Optimizer
 
 # define features and labels tensor dtypes
 feats_dtype = torch.FloatTensor
 label_dtype = torch.LongTensor
 
+# define model hyperparameters
+batch_size = 256
+epochs = 20
+img_crop_size = 64
+print_step = 120
+weight_decay = 0.01
+
 
 def train(network: torch.nn.Module,
           trainloader: DataLoader,
           testloader: DataLoader,
-          optimizer: torch.optim.Optimizer,
+          optimizer: Optimizer,
           loss_fn: Callable[[feats_dtype, label_dtype], feats_dtype],
-          NUM_EPOCHS: int,
-          l_rate: float,
           device: str) -> Tuple[List[float], List[float]]:
     # define training of a single data batch -> return error of the batch
     def train_batch(network: torch.nn.Module,  # the network
@@ -23,7 +29,7 @@ def train(network: torch.nn.Module,
                     # a function from a FloatTensor (prediction) and a LongTensor (Y) to a FloatTensor (the loss)
                     loss_fn: Callable[[feats_dtype, label_dtype], feats_dtype],
                     # the optimizer
-                    optimizer: torch.optim.Optimizer) -> float:
+                    optimizer: Optimizer) -> float:
 
         network.train()
 
@@ -39,7 +45,7 @@ def train(network: torch.nn.Module,
                     # a list of data points x
                     dataloader: DataLoader,
                     loss_fn: Callable[[feats_dtype, label_dtype], feats_dtype],
-                    optimizer: torch.optim.Optimizer,
+                    optimizer: Optimizer,
                     device: str) -> float:
 
         loss = 0.
@@ -82,10 +88,35 @@ def train(network: torch.nn.Module,
 
     train_losses = []
     eval_losses = []
-    for t in range(NUM_EPOCHS):
-        train_loss = train_epoch(network=network, dataloader=trainloader, optimizer=optimizer(network.parameters(), lr=l_rate),
-                                 loss_fn=loss_fn,
-                                 device=device)
+    for t in range(epochs):
+        if "rms" in str(optimizer).lower():
+            train_loss = train_epoch(network=network,
+                                     dataloader=trainloader,
+                                     optimizer=optimizer(network.parameters(),
+                                                         lr=.01,
+                                                         weight_decay=weight_decay),
+                                     loss_fn=loss_fn,
+                                     device=device)
+        elif "adam" in str(optimizer).lower():
+            train_loss = train_epoch(network=network,
+                                     dataloader=trainloader,
+                                     optimizer=optimizer(network.parameters(),
+                                                         lr=.0001,
+                                                         weight_decay=weight_decay),
+                                     loss_fn=loss_fn,
+                                     device=device)
+        elif "sgd" in str(optimizer).lower():
+            train_loss = train_epoch(network=network,
+                                     dataloader=trainloader,
+                                     optimizer=optimizer(network.parameters(),
+                                                         lr=.01,
+                                                         momentum=.91,
+                                                         weight_decay=weight_decay),
+                                     loss_fn=loss_fn,
+                                     device=device)
+        else:
+            print("Unknown optimizer")
+
         test_loss = test_epoch(network=network, dataloader=testloader, loss_fn=loss_fn, device=device)
 
         print('\nEpoch {}'.format(t))

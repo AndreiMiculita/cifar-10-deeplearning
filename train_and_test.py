@@ -6,14 +6,6 @@ from src.vgg import *
 from src.utils import *
 from torchvision import datasets, transforms
 
-# define model hyperparameters
-batch_size = 256
-epochs = 30
-learning_rate = .01
-img_crop_size = 64
-print_step = 120
-weight_decay = 0.01
-
 
 def train_and_test(model, optimizer):
     # use gpu tensors if available
@@ -46,7 +38,7 @@ def train_and_test(model, optimizer):
 
     start = time.time()
     # train the model on the train set, while validating on the validation set
-    train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, epochs, learning_rate, device)
+    train_losses, eval_losses = train(model, trainloader, testloader, optimizer, loss_fn, device)
     time_taken = time.time() - start
 
     # make predictions for a test set
@@ -61,23 +53,27 @@ def train_and_test(model, optimizer):
 
 
 if __name__ == "__main__":
-    models = [resnet18, vgg16_bn]
+    models = [AlexNet, resnet18, vgg16_bn]
     activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
-    optimizers = [torch.optim.Adam, torch.optim.RMSprop]
+    optimizers = [torch.optim.Adam, torch.optim.SGD, torch.optim.RMSprop]
 
     loss_, acc_ = [], []
     # test different activation functions
     with open('accuracies.csv', 'a') as accuracies, open('loss_over_time.csv', 'a') as loss_over_time:
         print("architecture,optimizer,activation,training accuracy,testing accuracy,time elapsed\n", file=accuracies)
-        for model in models:
-            for optimizer in optimizers:
+        for optimizer in optimizers:
+            for model in models:
                 for activation in activations:
                     print("testing ", model, " ", optimizer, " ", activation)
                     l_, a_, tr, ts, time_taken = train_and_test(model(activation=activation, num_classes=10), optimizer)
                     print(l_)
                     print(a_)
 
-                    print(f'{model},{optimizer},{activation},{str(tr)},{str(ts)},{time_taken}\n', file=accuracies)
-                    print(f'{model},{optimizer},{activation},{",".join(map(str,l_))}\n', file=loss_over_time)
-                    print(f'{model},{optimizer},{activation},{",".join(map(str,a_))}\n', file=loss_over_time)
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{str(tr)},{str(ts)},{time_taken}', file=accuracies)
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{",".join(map(str,l_))}', file=loss_over_time)
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{",".join(map(str,a_))}', file=loss_over_time)
+
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{str(tr)},{str(ts)},{time_taken}')
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{",".join(map(str,l_))}')
+                    print(f'{model},{optimizer},{str(activation).replace(",",";")},{",".join(map(str,a_))}')
                     torch.cuda.empty_cache()
