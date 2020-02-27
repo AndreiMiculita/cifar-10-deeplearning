@@ -1,0 +1,55 @@
+architecture,optimizer,activation,training accuracy,testing accuracy,time elapsed
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,ELU(alpha=1.0),43.10199737548828,42.2599983215332,433
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,LeakyReLU(negative_slope=0.01),49.95399856567383,49.16999816894531,433
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,ReLU(inplace=True),75.1719970703125,68.08999633789062,437
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,PReLU(num_parameters=1),17.865999221801758,18.43000030517578,443
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,CELU(alpha=1.0),10.0,10.0,448
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.adam.Adam'>,Softplus(beta=1; threshold=20),79.0719985961914,68.79999542236328,449
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,ELU(alpha=1.0),10.0,10.0,419
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,LeakyReLU(negative_slope=0.01),11.843999862670898,11.9399995803833,421
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,ReLU(inplace=True),10.0,10.0,421
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,PReLU(num_parameters=1),10.085999488830566,9.719999313354492,431
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,CELU(alpha=1.0),10.0,10.0,440
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.rmsprop.RMSprop'>,Softplus(beta=1; threshold=20),10.0,10.0,432
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,ELU(alpha=1.0),74.64199829101562,68.30999755859375,407
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,LeakyReLU(negative_slope=0.01),56.55799865722656,55.209999084472656,409
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,ReLU(inplace=True),59.35599899291992,57.519996643066406,412
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,PReLU(num_parameters=1),10.0,10.0,422
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,CELU(alpha=1.0),73.19200134277344,66.3699951171875,420
+<class 'src.alexnet.AlexNet'>,<class 'torch.optim.sgd.SGD'>,Softplus(beta=1; threshold=20),10.0,10.0,423
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,ELU(alpha=1.0),98.12799835205078,78.5999984741211,626
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,LeakyReLU(negative_slope=0.01),98.11199951171875,78.04000091552734,623
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,ReLU(inplace=True),99.40999603271484,79.13999938964844,630
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,PReLU(num_parameters=1),99.10399627685547,78.65999603271484,635
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,CELU(alpha=1.0),99.2439956665039,79.8499984741211,621
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.adam.Adam'>,Softplus(beta=1; threshold=20),97.86799621582031,78.30999755859375,624
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,ELU(alpha=1.0),92.10199737548828,72.20999908447266,618
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,LeakyReLU(negative_slope=0.01),67.88800048828125,58.30999755859375,595
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,ReLU(inplace=True),98.30599975585938,74.69999694824219,589
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,PReLU(num_parameters=1),96.14599609375,73.54999542236328,601
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,CELU(alpha=1.0),97.5219955444336,74.75,590
+<function resnet18 at 0x7fbb979a4a60>,<class 'torch.optim.rmsprop.RMSprop'>,Softplus(beta=1; threshold=20),99.2979965209961,77.4000015258789,605
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,ELU(alpha=1.0),65.40399932861328,63.269996643066406,579
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,LeakyReLU(negative_slope=0.01),87.07999420166016,75.62999725341797,578
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,ReLU(inplace=True),85.10599517822266,72.8499984741211,585
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,PReLU(num_parameters=1),86.04999542236328,74.93000030517578,596
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,CELU(alpha=1.0),72.13800048828125,69.54999542236328,592
+<function resnet18 at 0x7fce7a7c1510>,<class 'torch.optim.sgd.SGD'>,Softplus(beta=1; threshold=20),25.285999298095703,25.029998779296875,596
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,ELU(alpha=1.0),95.65799713134766,85.57999420166016,1558
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,LeakyReLU(negative_slope=0.01),91.59600067138672,82.29999542236328,1559
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,ReLU(inplace=True),88.33200073242188,81.47000122070312,1567
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,PReLU(num_parameters=1),92.83799743652344,83.0999984741211,1543
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,CELU(alpha=1.0),96.01599884033203,84.72000122070312,1610
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.adam.Adam'>,Softplus(beta=1; threshold=20),95.38599395751953,82.75,1623
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,ELU(alpha=1.0),10.0,10.0,1542
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,LeakyReLU(negative_slope=0.01),10.0,10.0,1581
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,ReLU(inplace=True),10.0,10.0,1555
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,PReLU(num_parameters=1),10.0,10.0,1565
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,CELU(alpha=1.0),10.0,10.0,1529
+<function vgg16_bn at 0x7fbb979b22f0>,<class 'torch.optim.rmsprop.RMSprop'>,Softplus(beta=1; threshold=20),10.0,10.0,1524
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,ELU(alpha=1.0),81.69400024414062,75.00999450683594,1491
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,LeakyReLU(negative_slope=0.01),77.76399993896484,71.83999633789062,1530
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,ReLU(inplace=True),85.4219970703125,78.61000061035156,1534
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,PReLU(num_parameters=1),82.75399780273438,76.93999481201172,1471
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,CELU(alpha=1.0),85.90999603271484,78.75,1509
+<function vgg16_bn at 0x7fce7a7c1d08>,<class 'torch.optim.sgd.SGD'>,Softplus(beta=1; threshold=20),79.9280014038086,73.97000122070312,1494
