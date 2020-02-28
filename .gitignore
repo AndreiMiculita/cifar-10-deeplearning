@@ -179,3 +179,4 @@ fabric.properties
 
 cifar-10-batches-py
 data
+/loss_over_time_with_weight_decay.csv

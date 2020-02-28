@@ -1,7 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 
-with open("loss_over_time1.csv") as loss_over_time:
+with open("loss_over_time_without_weight_decay.csv") as loss_over_time:
     reader = csv.reader(loss_over_time)
     lists = list(reader)
     x = range(len(lists[0])-3)

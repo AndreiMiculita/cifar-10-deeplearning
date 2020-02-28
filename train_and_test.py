@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     loss_, acc_ = [], []
     # test different activation functions
-    with open('accuracies2.csv', 'a') as accuracies, open('loss_over_time2.csv', 'a') as loss_over_time:
+    with open('accuracies_with_weight_decay.csv', 'a') as accuracies, open('loss_over_time_with_weight_decay.csv', 'a') as loss_over_time:
         print("architecture,optimizer,activation,training accuracy,testing accuracy,time elapsed\n", file=accuracies)
         for optimizer in optimizers:
             for model in models:
