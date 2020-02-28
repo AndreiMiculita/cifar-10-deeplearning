@@ -7,6 +7,6 @@ Activation functions:
 ![Activation functions](activation_functions.png)
 
 
-Accuracies for each configuration can be seen in accuracies_with_weight_decay.csv (weight decay = 0.01, one run with learning rates set to 0.01 for RMSprop, 0.001 for Adam and 0.01 for SGD; and one run with learning rates set ti 0.1 for RMSprop, 0.0001 for Adam and 0.001 for SGD) and accuracies_without_weight_decay.csv. 
+Accuracies for each configuration can be seen in accuracies_with_weight_decay.csv (weight decay = 0.01, one run with learning rates set to 0.01 for RMSprop, 0.001 for Adam and 0.01 for SGD; and one run with learning rates set ti 0.1 for RMSprop, 0.0001 for Adam and 0.001 for SGD) and accuracies_without_weight_decay.csv (run with learning rates set to 0.01 for RMSprop, 0.001 for Adam and 0.01 for SGD). 
 
 Similarly, loss can be found in loss_with_weight_decay.csv and loss_without_weight_decay.csv. For each configuration, there are 2 rows: one for training loss and one for validation loss.
