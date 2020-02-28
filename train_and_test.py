@@ -53,13 +53,13 @@ def train_and_test(model, optimizer):
 
 
 if __name__ == "__main__":
-    models = [AlexNet, resnet18, vgg16_bn]
+    models = [vgg16_bn, AlexNet, resnet18]
     activations = [nn.ELU(), nn.LeakyReLU(), nn.ReLU(inplace=True), nn.PReLU(), nn.CELU(), nn.Softplus()]
     optimizers = [torch.optim.Adam, torch.optim.SGD, torch.optim.RMSprop]
 
     loss_, acc_ = [], []
     # test different activation functions
-    with open('accuracies.csv', 'a') as accuracies, open('loss_over_time.csv', 'a') as loss_over_time:
+    with open('accuracies2.csv', 'a') as accuracies, open('loss_over_time2.csv', 'a') as loss_over_time:
         print("architecture,optimizer,activation,training accuracy,testing accuracy,time elapsed\n", file=accuracies)
         for optimizer in optimizers:
             for model in models:

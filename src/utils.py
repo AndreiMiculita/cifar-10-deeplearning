@@ -12,8 +12,7 @@ label_dtype = torch.LongTensor
 batch_size = 256
 epochs = 20
 img_crop_size = 64
-print_step = 120
-weight_decay = 0.01
+weight_decay = 0.1
 
 
 def train(network: torch.nn.Module,
@@ -93,7 +92,7 @@ def train(network: torch.nn.Module,
             train_loss = train_epoch(network=network,
                                      dataloader=trainloader,
                                      optimizer=optimizer(network.parameters(),
-                                                         lr=.01,
+                                                         lr=.0001,
                                                          weight_decay=weight_decay),
                                      loss_fn=loss_fn,
                                      device=device)
@@ -109,8 +108,8 @@ def train(network: torch.nn.Module,
             train_loss = train_epoch(network=network,
                                      dataloader=trainloader,
                                      optimizer=optimizer(network.parameters(),
-                                                         lr=.01,
-                                                         momentum=.91,
+                                                         lr=.001,
+                                                         momentum=.95,
                                                          weight_decay=weight_decay),
                                      loss_fn=loss_fn,
                                      device=device)
@@ -126,7 +125,7 @@ def train(network: torch.nn.Module,
         train_losses.append(train_loss)
         eval_losses.append(test_loss)
 
-    return (train_losses, eval_losses)
+    return train_losses, eval_losses
 
 
 def test(network: torch.nn.Module,
